@@ -1,25 +1,22 @@
-const mongoose = require('mongoose')
 const express = require('express');
-const db = require('./config/connection');
-const routes = require('./routes');
+const mongodb = require('mongodb').MongoClient;
+// We import the ObjectId() function from MongoDB
+const ObjectId = require('mongodb').ObjectId;
 
-
-const PORT = process.env.PORT || 3001;
 const app = express();
+const port = 3001;
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(routes);
+const connectionStringURI = `mongodb://127.0.0.1:27017/social-network-API_DB`;
 
+let db;
 
-mongoose.set('debug', true)
-
-
-
-
-
-db.once('open', () => {
-  app.listen(PORT, () => {
-    console.log(`API server running on port ${PORT}!`);
-  });
-});
+mongodb.connect(
+  connectionStringURI,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (err, client) => {
+    db = client.db();
+    app.listen(port, () => {
+      console.log(`Example app listening at http://localhost:${port}`);
+    });
+  }
+);
